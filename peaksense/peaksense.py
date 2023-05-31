@@ -1,6 +1,6 @@
 # imports
 import argparse
-import functions as f
+from peaksense import functions as f
 
 # validation functions
 def nonnegative_int(value):

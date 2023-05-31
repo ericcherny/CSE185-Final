@@ -184,7 +184,7 @@ def get_local_maxima(smoothed_sample_cov, smoothed_control_cov, chromosomes, max
     local_maxima, smoothed_harmonic = {}, {}
     for chrom in chromosomes:
         chrom = str(chrom)
-        print(f'Predicting peaks at chromosome {chrom}')
+        print(f'Predicting peaks at chromosome {chrom}...')
         smoothed_harmonic[chrom] = (smoothed_sample_cov[chrom] - smoothed_control_cov[chrom]) *\
                             (smoothed_sample_cov[chrom] / (smoothed_control_cov[chrom] + 1))
         local_maxima[chrom] = argrelextrema(smoothed_harmonic[chrom], np.greater, order=maxima_order)[0]
@@ -201,7 +201,9 @@ def clean_peaks(local_maxima, smoothed_harmonic, harmonic_threshold=20):
         for peak in peaks:
             if smoothed_harmonic[chrom][peak] >= harmonic_threshold:
                 cleaned_maxima[chrom] = np.append(cleaned_maxima[chrom], peak)
-        print(f'Cleaned maxima: clean number of peaks at chromosome {chrom}: {cleaned_maxima[chrom].shape[0]}')
+        reduction_percentage = (1 - round(cleaned_maxima[chrom].shape[0] / peaks.shape[0], 4)) * 100
+        print(f'Cleaned maxima: clean number of peaks at chromosome {chrom}: {cleaned_maxima[chrom].shape[0]} \
+              ({reduction_percentage}% reduction)')
     return cleaned_maxima
 
 # convert cleaned peaks to BED
