@@ -6,17 +6,6 @@ Running PeakSense may take up substantial memory. If running at 16GB RAM or less
 
 PeakSense is a command-line tool written in Python that utilizes deep learning techniques to recreate HOMER's findPeaks function. It is designed to convert files in various formats (such as BAM, SAM, sorted, or unsorted) into a BED file containing peak intervals. PeakSense is specifically tailored for transcription factors and provides users with control over several options to customize the peak calling process.
 
-## Features
-* Converts BAM, SAM, sorted, or unsorted files into a BED file with peak intervals
-* Specifically optimized for transcription factors
-* Allows customization of the following options:
-  * Peak width: Users can specify the desired peak widths (positive integer values)
-  * Chromosomes: Users can choose specific chromosome names for analysis or select 'all' for analyzing all chromosomes
-  * Alignment quality threshold: Sets a quality threshold for alignment quality control, removing reads below this threshold (non-negative integer values)
-  * Smoothing factor: Adjusts the smoothness of coverage curves and removes outliers (positive integer values)
-  * Maxima order: Defines the window size for analyzing peaks, with higher values identifying longer peaks (positive integer values)
-  * Harmonic threshold: Filters out low-confidence peaks (non-negative integer values)
-
 ## Installation
 Please note that installation requires Python 3.x.
 
@@ -30,24 +19,94 @@ cd PeakSense
 python3 setup.py install
 ```
 
-## Usage
-To use PeakSense, run the following command:
-```
-peaksense [options] <input_file1> <input_file2>
-```
-Replace <input_file1>, <input_file2>, etc. with the paths to your input sample and control files, respectively. 
+## Peaksense function
+The `peaksense` function performs PeakSense analysis on sample and control alignment files. It outputs a BED file containing peak intervals and their respective confidence scores.
 
-To see all available options and their descriptions, use the --help or -h flag:
+#### Arguments
+- `sample` (required): Sample file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+- `control` (required): Control file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+- `-w, --width-peaks` (optional): Peak widths to return. Accepts positive integer value. Default is 75.
+- `-c, --chromosomes` (optional): Chromosome names to analyze. Use 'all' to analyze all chromosomes. Separate multiple names with spaces. Default is 'all'.
+- `-q, --quality-threshold` (optional): Quality threshold for alignment quality control. All aligned reads below this threshold are removed from the BAM file. Accepts non-negative integer value. Default is 35.
+- `-s, --smoothing-factor` (optional): Smoothing factor for coverage curves. Higher values produce smoother curves and remove outliers. Values too high can reduce data quality. Accepts positive integer value. Default is 3.
+- `-m, --maxima-order` (optional): Window size in which peaks are analyzed. Higher values identify longer peaks. Accepts positive integer value. Default is 10.
+   - ⚠️ Note: higher values are memory and time intensive ⚠️
+- `-ht, --harmonic-threshold` (optional): Harmonic threshold filters out low-confidence peaks. Accepts non-negative integer value. Default is 20.
+
+#### Usage
+To use `peaksense`, run the following command:
 ```
-peaksense --help
+peaksense peaksense <sample_file> <control_file> [options]
+```
+Replace <sample_file>, <control_file> with the paths to your input sample and control files, respectively. 
+
+
+## Viz_alignments function
+
+The `viz_alignments` function visualizes the alignments in a BAM or SAM file.
+
+#### Arguments
+
+- `file` (required): Sample or control file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+
+#### Usage
+To use `viz_alignments`, run the following command:
+```
+peaksense viz_alignments <file>
 ```
 
-## Examples
-Here are some example usages of PeakSense:
+## Viz_peaks function
+
+The `viz_peaks` function visualizes the peaks from a BED file.
+
+#### Arguments
+
+- `file` (required): Output peaks file. Accepts BED. File can be produced by HOMER or PeakSense.
+
+#### Usage
+To use `viz_peaks`, run the following command:
 ```
-peaksense examples/Klf4.sorted.bam examples/control.sorted.bam -c 17
+peaksense viz_peaks <file>
 ```
-This command will call peaks using the specified sample and control input files (Klf4.sorted.bam and control.sorted.bam) and limit the analysis to chromosome 17.
+
+
+
+## Example usage
+1. Analyze alignments on provided KLF4 and control:
+   ```
+   peaksense viz_alignments examples/Klf4.sorted.bam
+   ```
+   The above calls `viz_alignments` on KLF4 transcription factor.
+
+   ```
+   peaksense viz_alignments examples/control.sorted.bam
+   ```
+   The above calls `viz_alignments` on the control.
+
+2. Call `peaksense` on KLF4
+   ```
+   peaksense peaksense examples/Klf4.sorted.bam examples/control.sorted.bam -c 17 8
+   ```
+   The above function calls `peaksense` on the KLF4 transcription factor, which is primarily aligned on chromosome 17. We included chromosome 17 and chromosome 8 to demonstrate the variation in identified peaks between the true target chromosome and a non-target chromosome.
+
+   Or, if you have more time and 48GB+ RAM, you can run:
+
+   ```
+   peaksense peaksense examples/Klf4.sorted.bam examples/control.sorted.bam -c all -s 6 -m 4 -ht 40
+   ```
+   The above takes 10-15 minutes to run on all chromosomes. Smoothing factor is doubled to reduce outliers since we are working with more non-target chromosomes. Maxima order is decreased to speed up the process, and outlier peaks are already filtered with smoothing factor. Increased harmonic threshold enforces a more strict peak filter.
+
+3. Compare to HOMER's `findPeaks` output:
+   ```
+   peaksense viz_peaks examples/Klf4.peaks.bed
+   ```
+   The above calls `viz_peaks` on KLF4 transcription factor generated by HOMER's `findPeaks`.
+
+   ```
+   peaksense viz_peaks examples/Klf4.peaksense.bed
+   ```
+   The above calls `viz_peaks` on KLF4 transcription factor generated by PeakSense's `peaksense`.
+
 
 ## Issues and Contributions
 If you encounter any issues while using PeakSense or have suggestions for improvements, please create an issue on the GitHub repository. Contributions are also welcome through pull requests.
