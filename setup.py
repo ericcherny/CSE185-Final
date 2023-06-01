@@ -19,7 +19,9 @@ setup(
     python_requires='>3',
     entry_points={
         'console_scripts': [
-            'peaksense=peaksense.peaksense:main'
+            'peaksense=peaksense.peaksense:main',
+            'viz_alignments=peaksense.peaksense:main',
+            'viz_peaks=peaksense.peaksense:main'
         ]
     }
 )

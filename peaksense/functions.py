@@ -44,7 +44,7 @@ def parse_bam(bam_file, viz=False):
     int_cols = ['start','end','qual','read_length']
     for col in int_cols:
         df[col] = df[col].astype('int')
-    chroms = df['chrom'].value_counts()[df['chrom'].value_counts() > 1000].index.to_list()
+    chroms = df['chrom'].value_counts().index.to_list()[:10]
     heights = [(df['chrom']==chrom).sum() for chrom in chroms]
 
     # all prints
