@@ -85,6 +85,9 @@ peaksense viz_peaks <file>
 
 
 ## Example
+
+Please follow the example in the provided sequence.
+
 1. Analyze alignments on provided KLF4 and control:
    ```
    peaksense viz_alignments examples/Klf4.sorted.bam
