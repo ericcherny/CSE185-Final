@@ -19,7 +19,7 @@ cd PeakSense
 python3 setup.py install
 ```
 
-## Peaksense function
+## Peaksense Function
 The `peaksense` function performs PeakSense analysis on sample and control alignment files. It outputs a BED file containing peak intervals and their respective confidence scores.
 
 #### Arguments
@@ -41,7 +41,7 @@ peaksense peaksense <sample_file> <control_file> [options]
 Replace <sample_file>, <control_file> with the paths to your input sample and control files, respectively. 
 
 
-## Viz_alignments function
+## Visualize Alignments Function
 
 The `viz_alignments` function visualizes the alignments in a BAM or SAM file.
 
@@ -55,7 +55,7 @@ To use `viz_alignments`, run the following command:
 peaksense viz_alignments <file>
 ```
 
-## Viz_peaks function
+## Visualize Peaks Function
 
 The `viz_peaks` function visualizes the peaks from a BED file.
 
@@ -71,7 +71,7 @@ peaksense viz_peaks <file>
 
 
 
-## Example usage
+## Example
 1. Analyze alignments on provided KLF4 and control:
    ```
    peaksense viz_alignments examples/Klf4.sorted.bam
