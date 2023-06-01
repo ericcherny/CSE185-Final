@@ -9,7 +9,8 @@ Running PeakSense may take up substantial memory. If running at 16GB RAM or less
    🚧 Under construction 🚧
 </p>
 
-1. The predictive deep learning model for peak finding is currently training on Amazon Sagemaker; current `peaksense` algorithm heuristic policies.
+1. The predictive deep learning model for peak finding is being trained.
+   - Current `peaksense` algorithm uses heuristic policies.
 2. More visualization functions need to be connected.
 3. README needs an image and video update.
 
