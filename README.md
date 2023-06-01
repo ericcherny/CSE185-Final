@@ -6,17 +6,6 @@ Running PeakSense may take up substantial memory. If running at 16GB RAM or less
 
 PeakSense is a command-line tool written in Python that utilizes deep learning techniques to recreate HOMER's findPeaks function. It is designed to convert files in various formats (such as BAM, SAM, sorted, or unsorted) into a BED file containing peak intervals. PeakSense is specifically tailored for transcription factors and provides users with control over several options to customize the peak calling process.
 
-## Features
-* Converts BAM, SAM, sorted, or unsorted files into a BED file with peak intervals
-* Specifically optimized for transcription factors
-* Allows customization of the following options:
-  * Peak width: Users can specify the desired peak widths (positive integer values)
-  * Chromosomes: Users can choose specific chromosome names for analysis or select 'all' for analyzing all chromosomes
-  * Alignment quality threshold: Sets a quality threshold for alignment quality control, removing reads below this threshold (non-negative integer values)
-  * Smoothing factor: Adjusts the smoothness of coverage curves and removes outliers (positive integer values)
-  * Maxima order: Defines the window size for analyzing peaks, with higher values identifying longer peaks (positive integer values)
-  * Harmonic threshold: Filters out low-confidence peaks (non-negative integer values)
-
 ## Installation
 Please note that installation requires Python 3.x.
 
@@ -30,45 +19,104 @@ cd PeakSense
 python3 setup.py install
 ```
 
-## Usage
-To use PeakSense, run the following command:
+## Functions
+PeakSense currently supports 3 functions: `peaksense`, `viz_alignments`, `viz_peaks`.
+
+### *peaksense*
+The `peaksense` function performs PeakSense analysis on sample and control alignment files. It outputs a BED file containing peak intervals and their respective confidence scores.
+
+#### Arguments
+- `sample` (required): Sample file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+- `control` (required): Control file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+- `-w, --width-peaks` (optional): Peak widths to return. Accepts positive integer value. Default is 75.
+- `-c, --chromosomes` (optional): Chromosome names to analyze. Use 'all' to analyze all chromosomes. Separate multiple names with spaces. Default is 'all'.
+- `-q, --quality-threshold` (optional): Quality threshold for alignment quality control. All aligned reads below this threshold are removed from the BAM file. Accepts non-negative integer value. Default is 35.
+- `-s, --smoothing-factor` (optional): Smoothing factor for coverage curves. Higher values produce smoother curves and remove outliers. Values too high can reduce data quality. Accepts positive integer value. Default is 3.
+- `-m, --maxima-order` (optional): Window size in which peaks are analyzed. Higher values identify longer peaks. Accepts positive integer value. Default is 10.
+   - ⚠️ Note: higher values are memory and time intensive ⚠️
+- `-ht, --harmonic-threshold` (optional): Harmonic threshold filters out low-confidence peaks. Accepts non-negative integer value. Default is 20.
+
+#### Usage
+To use `peaksense`, run the following command:
 ```
-peaksense [options] <input_file1> <input_file2>
+peaksense peaksense <sample_file> <control_file> [options]
 ```
-Replace <input_file1>, <input_file2>, etc. with the paths to your input sample and control files, respectively. 
+Replace <sample_file>, <control_file> with the paths to your input sample and control files, respectively. 
 
 To see all available options and their descriptions, use the --help or -h flag:
 ```
-peaksense --help
+peaksense peaksense --help
 ```
-## Command Line Arguments
 
-The following are the command line arguments for PeakSense:
-
-- `bam_sample` (required): Sample file. Accepts BAM & SAM formats. The file can be sorted or unsorted. The file will be indexed by PeakSense.
-
-- `bam_control` (required): Control file. Accepts BAM & SAM formats. The file can be sorted or unsorted. The file will be indexed by PeakSense.
-
-- `-w` or `--width-peaks` (optional): Peak widths to return for transcription peak intervals. Accepts a positive integer value. Default: 75.
-
-- `-c` or `--chromosomes` (optional): Chromosome names to analyze. Use 'all' to analyze all chromosomes. Separate multiple names with spaces. Default: 'all'.
-
-- `-q` or `--quality-threshold` (optional): Quality threshold for alignment quality control. All aligned reads below this threshold will be removed from the BAM file. Accepts a non-negative integer value. Default: 35.
-
-- `-s` or `--smoothing-factor` (optional): Smoothing factor for coverage curves. Higher values produce smoother curves and minimize spikes. However, values that are too high can reduce data quality. Accepts a positive integer value. Default: 3.
-
-- `-m` or `--maxima-order` (optional): Window size in which peaks are analyzed. Higher values identify longer peaks. Accepts a positive integer value. Default value is 10.
-   - ⚠️ Note: higher values are memory and time intensive ⚠️
-
-- `-ht` or `--harmonic-threshold` (optional): Harmonic threshold for filtering out low-confidence peaks. Accepts a non-negative integer value. Default value is 20.
-
-
-## Examples
-Here are some example usages of PeakSense:
+#### Examples
 ```
-peaksense examples/Klf4.sorted.bam examples/control.sorted.bam -c 17
+peaksense peaksense examples/Klf4.sorted.bam examples/control.sorted.bam -c 17 8
 ```
-This command will call peaks using the specified sample and control input files (Klf4.sorted.bam and control.sorted.bam) and limit the analysis to chromosome 17.
+The above function calls `peaksense` on the KLF4 transcription factor, which is primarily aligned on chromosome 17. We included chromosome 17 and chromosome 8 to demonstrate the variation in identified peaks between the true target chromosome and a non-target chromosome.
+
+```
+peaksense peaksense examples/Oct4.sorted.bam examples/control.sorted.bam -c 17 1 -q 25 -s 5 -m 5 -ht 40
+```
+The above function similarly calls `peaksense` on the OCT4 transcription factor. We reduced alignment quality threshold to 25 (giving us more aligned reads to work with), increased smoothing factor (reducing outliers and spikes), reduced maxima order (looking for more local trends), and increased harmonic threshold to 40 (to record more confident peaks).
+
+```
+peaksense peaksense examples/Sox2.sorted.bam examples/control.sorted.bam -c all -s 6 -m 4 -ht 40
+```
+If you have a machine with 48GB+ RAM and have 15+ minutes, you can try running the function on all chromosomes.
+
+
+
+### *viz_alignments*
+
+The `viz_alignments` function visualizes the alignments in a BAM or SAM file.
+
+#### Arguments
+
+- `file` (required): Sample or control file. Accepts BAM & SAM. File can be sorted or unsorted. File will be indexed by PeakSense.
+
+#### Usage
+To use `viz_alignments`, run the following command:
+```
+peaksense viz_alignments <file>
+```
+
+#### Examples
+```
+peaksense viz_alignments examples/Klf4.sorted.bam
+```
+The above calls `viz_alignments` on KLF4 transcription factor.
+
+```
+peaksense viz_alignments examples/control.sorted.bam
+```
+The above calls `viz_alignments` on the control.
+
+
+### *viz_peaks*
+
+The `viz_peaks` function visualizes the peaks from a BED file.
+
+#### Arguments
+
+- `file` (required): Output peaks file. Accepts BED. File can be produced by HOMER or PeakSense.
+
+#### Usage
+To use `viz_peaks`, run the following command:
+```
+peaksense viz_peaks <file>
+```
+
+#### Examples
+```
+peaksense viz_peaks examples/Klf4.peaks.bed
+```
+The above calls `viz_peaks` on KLF4 transcription factor generated by HOMER's `findPeaks`.
+
+```
+peaksense viz_peaks examples/Klf4.peaksense.bed
+```
+The above calls `viz_peaks` on KLF4 transcription factor generated by PeakSense's `peaksense`.
+
 
 ## Issues and Contributions
 If you encounter any issues while using PeakSense or have suggestions for improvements, please create an issue on the GitHub repository. Contributions are also welcome through pull requests.
