@@ -1,6 +1,18 @@
-⚠️ WARNING: ⚠️
+<p align="center">
+   ⚠️ Warning ⚠️ 
+</p>
 
 Running PeakSense may take up substantial memory. If running at 16GB RAM or less, limit your calls to only the most important chromosomes for every run (for example, the example dataset has alignments for all chromosomes, yet is truly chr17). Using DataHub or another machine with access to 48GB+ RAM will give you more flexibility.
+
+
+<p align="center">
+   🚧 Under construction 🚧
+</p>
+
+1. The predictive deep learning model for peak finding is currently training on Amazon Sagemaker; current `peaksense` algorithm heuristic policies.
+2. More visualization functions need to be connected.
+3. README needs an image and video update.
+
 
 # PeakSense: Deep Learning-based Peak Calling Tool
 
