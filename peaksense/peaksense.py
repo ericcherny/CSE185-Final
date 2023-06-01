@@ -32,7 +32,7 @@ def main():
     parser.add_argument('-m', "--maxima-order", help="Window size in which peaks are analyzed. Higher values identify longer peaks. Accepts positive integer value.", type=positive_int, default=10)
     parser.add_argument('-ht', "--harmonic-threshold", help="Harmonic threshold filters out low-confidence peaks. Accepts non-negative integer value.", type=nonnegative_int, default=20)
 
-    # parse arguments
+    # parse all arguments
     args = parser.parse_args()
     bam_sample = args.bam_sample
     bam_control = args.bam_control
