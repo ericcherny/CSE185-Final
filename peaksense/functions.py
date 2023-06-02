@@ -71,10 +71,12 @@ def parse_bam(bam_file, viz=False):
 
 
 def parse_bed(bed_file, viz=False):
+
     # populate fields for DataFrame
     benchmark_file = pybedtools.BedTool(bed_file)
     read_lengths = [int(interval.length) for interval in benchmark_file]
-    scores = [float(interval.score) for interval in benchmark_file if interval.score is not None]
+    # print([interval for interval in benchmark_file] )
+    # scores = [float(interval.score) for interval in benchmark_file if interval.score is not None]
     num_intervals = benchmark_file.count()
     total_length = sum(interval.length for interval in benchmark_file)
     starts = [interval.start for interval in benchmark_file]
@@ -82,7 +84,7 @@ def parse_bed(bed_file, viz=False):
     chroms = [interval.chrom for interval in benchmark_file]
 
     # create DataFrame
-    df = pd.DataFrame({'chrom': chroms, 'start': starts, 'end': ends, 'read_length': read_lengths, 'score': scores})
+    df = pd.DataFrame({'chrom': chroms, 'start': starts, 'end': ends, 'read_length': read_lengths})
     
     # minimal data cleaning & feature engineering
     df = df.sort_values(by=['start'])[df['chrom'] == '17'].reset_index(drop=True)
@@ -103,8 +105,8 @@ def parse_bed(bed_file, viz=False):
         fig, ax = plt.subplots(2,2,figsize=(15,9))
         ax[0,0].boxplot(read_lengths)
         ax[0,0].set(title='Interval lengths')
-        ax[0,1].boxplot(scores)
-        ax[0,1].set(title='Scores')
+        # ax[0,1].boxplot(scores)
+        # ax[0,1].set(title='Scores')
         ax[1,0].hist(starts)
         ax[1,0].set(title='Starting positions')
         ax[1,1].barh(unique_chroms, value_chroms)
@@ -214,7 +216,7 @@ def maxima_to_bed(maxima, smoothed_harmonic, width, sample_bam_fname):
         peaks = peaks.astype('int')
         df2 = pd.DataFrame({'chr': chrom, 
                             'start': peaks-int(width/2), 
-                            'end': peaks-int(width/2)+1, 
+                            'end': peaks+int(width/2)+1, 
                             'score': smoothed_harmonic[chrom][peaks]})
         df = pd.concat([df, df2], axis=0)
     fname = [term for term in sample_bam_fname.split('.') if term not in ['bam','sam','sorted']]
