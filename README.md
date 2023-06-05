@@ -19,6 +19,18 @@ Running PeakSense may take up substantial memory. If running at 16GB RAM or less
 
 PeakSense is a command-line tool written in Python that utilizes deep learning techniques to recreate HOMER's findPeaks function. It is designed to convert files in various formats (such as BAM, SAM, sorted, or unsorted) into a BED file containing peak intervals. PeakSense is specifically tailored for transcription factors and provides users with control over several options to customize the peak calling process.
 
+## Table of Contents
+- [Installation](#installation)
+- [Functions](#functions)
+  - [PeakSense Function](#peaksense-function)
+  - [Visualize Alignments Function](#visualize-alignments-function)
+  - [Visualize Peaks Function](#visualize-peaks-function)
+- [Example](#example)
+- [Issues & Contributions](#issues-and-contributions)
+- [License](#license)
+- [Acknowledgements](#acknowledgments)
+- [Contact](#contact)
+
 ## Installation
 Please note that installation requires Python 3.x.
 
