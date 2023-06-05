@@ -21,11 +21,11 @@ PeakSense is a command-line tool written in Python that utilizes deep learning t
 
 ## Table of Contents
 - [Installation](#installation)
-- [Functions](#functions)
+- [Functions]
   - [PeakSense Function](#peaksense-function)
   - [Visualize Alignments Function](#visualize-alignments-function)
   - [Visualize Peaks Function](#visualize-peaks-function)
-- [Example](#example)
+- [Full Example](#example)
 - [Issues & Contributions](#issues-and-contributions)
 - [License](#license)
 - [Acknowledgements](#acknowledgments)
