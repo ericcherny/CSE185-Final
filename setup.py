@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='PeakSense',
-    version='0.0.0',
+    version='1.0.0',
     author='Eric Cherny',
     author_email='eric@internalize.io',
     description='PeakSense is a powerful tool for identifying peaks in transcription factor binding data, leveraging the capabilities of deep learning.',
